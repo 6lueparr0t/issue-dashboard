@@ -1,20 +1,14 @@
-import { RouteLoaderData } from "./pages.d";
 import React, { Suspense, useEffect } from "react";
-// import { useRouteLoaderData, defer, LoaderFunctionArgs } from "react-router-dom";
-import {
-  Await,
-  defer,
-  useRouteLoaderData,
-} from "react-router-dom";
+import { Await, defer, useRouteLoaderData } from "react-router-dom";
+import fp from "lodash/fp";
 
-import { sleep, request } from "@/lib/utils";
 import { ImageCarousel } from "@/components/Home/ImageCarousel";
 
-import fp from "lodash/fp";
 import { LatestIssuse } from "@/components/Home/LatestIssuse";
 
-const CATEGORIES: string[] = ["qna", "free"];
-
+import { RouteLoaderData } from "@/pages/pages.d";
+import { sleep, request, parseData } from "@/lib/utils";
+import { CATEGORIES } from "@/lib/constants";
 
 const Home: React.FC = () => {
   const { title, list } = useRouteLoaderData("home") as RouteLoaderData;
@@ -25,19 +19,28 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex flex-col justify-center items-center p-8">
-      <Suspense fallback={<div style={({textAlign : "center"})}>Loading...</div>}>
+      <Suspense fallback={<div style={{ textAlign: "center" }}>Loading...</div>}>
         <Await resolve={list}>
-          {(list) => <>
-            <div>
-              <ImageCarousel />
-            </div>
-            <div className="w-full flex flex-row justify-evenly items-center mt-20">
-              {/* 질문 게시판 */}
-              <LatestIssuse type={"qna"} title={"질문게시판"} list={list.qna}/>
-              {/* 자유 게시판 */}
-              <LatestIssuse type={"free"} title={"자유게시판"} list={list.free}/>
-            </div>
-          </>}
+          {(list) => (
+            <>
+              <div>
+                <ImageCarousel />
+              </div>
+              <div className="w-full flex flex-row justify-evenly items-center mt-20">
+                {fp.map(
+                  (category: string) => (
+                    <LatestIssuse
+                      key={category}
+                      category={category}
+                      title={CATEGORIES[category].title}
+                      list={list[category]}
+                    />
+                  ),
+                  fp.keys(CATEGORIES)
+                )}
+              </div>
+            </>
+          )}
         </Await>
       </Suspense>
     </div>
@@ -46,43 +49,47 @@ const Home: React.FC = () => {
 
 export default Home;
 
-const getList = async (): Promise<object> => {
-  const resultData: { [key: string]: object } = {};
+const getList = async (
+  option: object
+): Promise<{
+  list: { [key: string]: object };
+  status?: number;
+  message?: object;
+}> => {
+  const list: { [key: string]: object } = {};
 
   try {
     await Promise.all(
-      CATEGORIES.map(async (category) => {
-        const response = await request("get", category, {per_page : 5});
-        console.log(response.data);
+      fp.map(async (category) => {
+        const response = await request("get", category, option);
+
         if (response.status === 200) {
-          resultData[category] = response.data.map((item: object) => ({
-            ...fp.pick(["number", "title", "body", "created_at", "updated_at"], item),
-            user: fp.pick(["avatar_url", "login"], fp.get("user", item)),
-          }));
+          list[category] = response.data.map((item: object) => parseData(item));
         } else {
           throw new Error("Could not fetch details for selected event.");
         }
-      })
+      }, fp.keys(CATEGORIES))
     );
   } catch (error) {
     return {
+      list: {},
       status: 500,
-      message: error,
+      message: error ?? "",
     };
   }
 
-  return resultData;
+  return {list};
 };
 
 // export async function loader({ params }: LoaderFunctionArgs) {
 export async function loader() {
   await sleep();
 
+  const { list } = await getList({ per_page: 5 });
   // getList 앞에 await 를 주면 event 를 기다렸다가 리스트를 출력한다.
   return defer({
-    type: "home",
+    category: "home",
     title: "홈",
-    // list: {free : [], qna: []},
-    list: await getList(),
+    list: list,
   });
 }

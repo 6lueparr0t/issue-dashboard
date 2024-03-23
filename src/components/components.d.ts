@@ -1,4 +1,4 @@
-export type Issues = {
+export type Issue = {
   number: number;
   title : string;
   body : string;
@@ -12,7 +12,7 @@ export type Issues = {
 }
 
 export type ComponentProps = {
-  type: string;
+  category: string;
   title: string;
   list: ListRow[];
 };

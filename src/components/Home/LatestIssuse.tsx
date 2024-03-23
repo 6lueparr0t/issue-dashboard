@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ComponentProps, Issues } from "@/components/components.d";
+import { ComponentProps, Issue } from "@/components/components.d";
 import { Card, CardContent } from "@/components/ui/card";
 
 import dayjs from "dayjs";
@@ -20,23 +20,23 @@ const formatDateTime = (dateTimeString: string): string => {
   }
 };
 
-export const LatestIssuse: React.FC<ComponentProps> = ({ type, title, list }) => {
+export const LatestIssuse: React.FC<ComponentProps> = ({ category, title, list }) => {
   return (
     <div className="flex-1 xl:max-w-[768px] flex flex-col">
       <h6 className="bold">
-        <Link to={`/${type}`}>{title}</Link>
+        <Link to={`/${category}`}>{title}</Link>
       </h6>
       <div className="p-1">
         <Card className="shadow-none">
-          <CardContent className="flex h-56 justify-center p-6">
+          <CardContent className="flex flex-col h-56 justify-self-center p-6">
             {list.length <= 0 ? (
-              <div className="self-center">등록된 게시글이 없습니다.</div>
+              <div className="m-auto">등록된 게시글이 없습니다.</div>
             ) : (
-              list.map((issue: Issues, index: number) => {
+              list.map((issue: Issue, index: number) => {
                 return (
                   <div key={index} className="grid grid-cols-2 gap-2">
                     <div className="truncate md:w-52 xl:w-[550px]">
-                      <Link to={`/${type}/${issue.number}`}>
+                      <Link to={`/${category}/${issue.number}`}>
                         {issue.title}
                       </Link>
                       </div>

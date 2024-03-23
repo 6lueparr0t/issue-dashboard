@@ -1,101 +1,133 @@
-import { useEffect, Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import {
-  useRouteLoaderData,
-  json,
-  redirect,
-  defer,
   Await,
-  LoaderFunctionArgs,
+  defer,
+  redirect,
   ActionFunctionArgs,
+  LoaderFunctionArgs,
+  useRouteLoaderData,
 } from "react-router-dom";
-import { sleep } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import fp from "lodash/fp";
 
-import { RouteLoaderData } from "./pages.d"
+import { RouteLoaderData } from "@/pages/pages.d";
+import { sleep, request, search, parseData, parseTotalCount } from "@/lib/utils";
+import { CATEGORIES, PER_PAGE } from "@/lib/constants";
 
 const Board: React.FC = () => {
-  const { type, title } = useRouteLoaderData("board") as RouteLoaderData;
+  const { category, title, list, total, page } = useRouteLoaderData("board") as RouteLoaderData;
 
   useEffect(() => {
     document.title = title;
-  }, [type]);
+  }, [title]);
+
+  console.log("category : ", category);
+  console.log("list : ", list);
+  console.log("total : ", total);
+  console.log("page : ", page);
 
   return (
     <>
-      <div className="w-full m-2 bg-white text-gray-800 dark:bg-gray-800 dark:text-white">
-        <Button
-          onClick={() => {
-            console.log(import.meta.env.VITE_APP_GIT_TOKEN);
-            console.log(type);
-          }}
-        >
-          {type}
-        </Button>
+      <div className="flex flex-col justify-center items-center p-8">
+        <Suspense fallback={<div style={{ textAlign: "center" }}>Loading...</div>}>
+          <Await resolve={list}>
+            {(list) => (
+              <>
+                <div className="w-full flex flex-row justify-evenly items-center mt-20">
+                  {/* {list[category].length} */}
+                </div>
+              </>
+            )}
+          </Await>
+        </Suspense>
       </div>
-      {/* <Suspense fallback={<p style={({textAlign : "center"})}>Loading...</p>}>
-        <Await resolve={type}>
-          {(type) => <></>}
-        </Await>
-      </Suspense> */}
     </>
   );
 };
 
 export default Board;
 
-const getTitle = (type: string): string => {
-  let title: string = "";
-  switch (type) {
-    case "qna":
-      title = "질문게시판";
-      break;
-    case "free":
-      title = "자유게시판";
-      break;
+const getList = async (
+  category: string,
+  query: { keyword: string; in: string } = { keyword: "", in: "title" },
+  option: object = {}
+): Promise<{
+  list: { [key: string]: object };
+  total: number;
+  status?: number;
+  message?: object;
+}> => {
+  const list: { [key: string]: object } = {};
+
+  let total: number = 0;
+
+  try {
+    let response;
+    if (fp.get("keyword", query) !== "") {
+      response = await search(category, query, option);
+
+      if (response.status === 200) {
+        total = parseTotalCount(response);
+        list[category] = response.data.items.map((item: object) => parseData(item));
+      }
+    } else {
+      response = await request("get", category, option);
+      if (response.status === 200) {
+        total = parseTotalCount(response);
+        list[category] = response.data.map((item: object) => parseData(item));
+      }
+    }
+
+    if (response.status !== 200) throw new Error("Could not fetch details for selected event.");
+  } catch (error) {
+    return {
+      list: {},
+      total: 0,
+      status: 500,
+      message: error ?? "",
+    };
   }
 
-  return title;
-};
-
-const loadList = async (type: string): Promise<string> => {
-  // const response = await fetch(`http://localhost:8080/events/${eventId}`);
-  // if (!response.ok) {
-  //   return json(
-  //     { message: "Could not fetch details for selected event." },
-  //     {
-  //       status: 500,
-  //     }
-  //   );
-  // } else {
-  //   const resData = await response.json();
-  //   return resData.event;
-  // }
-  const response = type;
-  return response;
+  return { list: list, total: total };
 };
 
 // 컴포넌트 마다 loader 를 두어, App.js 의 Router 에서 선언한다.
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   await sleep();
-  const type: string = String(params.type);
 
-  // loadList 앞에 await 를 주면 event 를 기다렸다가
-  // 그 다음 리스트를 출력한다.
+  const category = params?.category ?? "";
+  if (fp.has(category, CATEGORIES) === false) {
+    return redirect("/");
+  }
+
+  const searchParams = new URL(request.url).searchParams;
+
+  const query = {
+    keyword: searchParams.get("keyword") ?? "",
+    in: searchParams.get("in") ?? "title",
+  };
+  const page: number = Number(searchParams.get("page") ?? 1);
+
+  const title = fp.get(`${category}.title`, CATEGORIES);
+
+  const { list, total } = await getList(category, query, { per_page: PER_PAGE });
+
   return defer({
-    // type: loadList(type),
-    type: type,
-    title: getTitle(type),
-    // list: await loadList(type),
+    category: category,
+    title: title,
+    list: list,
+    total: total,
+    page: page,
   });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
   await sleep();
+
   const method = request.method;
   const data = await request.formData();
 
   return new Response(null, {
     status: 302,
-    headers: { Location: "/test" },
+    headers: { Location: "/qna" },
   });
 }
