@@ -33,9 +33,9 @@ const Home: React.FC = () => {
             </div>
             <div className="w-full flex flex-row justify-evenly items-center mt-20">
               {/* 질문 게시판 */}
-              <LatestIssuse title="질문게시판" list={list.qna}/>
+              <LatestIssuse type={"qna"} title={"질문게시판"} list={list.qna}/>
               {/* 자유 게시판 */}
-              <LatestIssuse title="자유게시판" list={list.free}/>
+              <LatestIssuse type={"free"} title={"자유게시판"} list={list.free}/>
             </div>
           </>}
         </Await>
@@ -52,16 +52,15 @@ const getList = async (): Promise<object> => {
   try {
     await Promise.all(
       CATEGORIES.map(async (category) => {
-        // links.push(fp.replace('{{type}}', category)(import.meta.env.VITE_APP_GIT_URL))
         const response = await request("get", category, {per_page : 5});
-        if (response.status !== 200) {
-          throw new Error("Could not fetch details for selected event.");
-        } else {
-          // resultData[category] = fp.map(fp.pick(['title', 'body', 'created_at', 'updated_at', 'user']))(response.data);
+        console.log(response.data);
+        if (response.status === 200) {
           resultData[category] = response.data.map((item: object) => ({
-            ...fp.pick(["title", "body", "created_at", "updated_at"], item),
+            ...fp.pick(["number", "title", "body", "created_at", "updated_at"], item),
             user: fp.pick(["avatar_url", "login"], fp.get("user", item)),
           }));
+        } else {
+          throw new Error("Could not fetch details for selected event.");
         }
       })
     );
