@@ -17,7 +17,7 @@ const MENU: { path: string; title: string }[] = [
 
 const Navigation: React.FC = () => {
   return (
-    <header className="max-w-screen-xl mx-auto px-8 py-8 flex justify-between">
+    <header className="w-full mx-auto px-8 py-8 flex justify-between border-solid border-b-2 border-gray-800">
       <nav className="w-screen">
         <ul className="flex gap-4">
           {MENU.map((item, index) => {

@@ -11,20 +11,10 @@ import {
 import { sleep } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-interface BoardProps {
-  // title: string;
-}
+import { RouteLoaderData } from "./pages.d"
 
-interface RouteLoaderData {
-  type: string;
-  title: string;
-  // list: {}[];
-  // page: {}[];
-  // count: {}[];
-}
-
-const Board: React.FC<BoardProps> = () => {
-  const { type, title } = useRouteLoaderData("type") as RouteLoaderData;
+const Board: React.FC = () => {
+  const { type, title } = useRouteLoaderData("board") as RouteLoaderData;
 
   useEffect(() => {
     document.title = title;
@@ -35,8 +25,6 @@ const Board: React.FC<BoardProps> = () => {
       <div className="w-full m-2 bg-white text-gray-800 dark:bg-gray-800 dark:text-white">
         <Button
           onClick={() => {
-            console.log(import.meta.env.VITE_APP_GIT_URL_QNA);
-            console.log(import.meta.env.VITE_APP_GIT_URL_FREE);
             console.log(import.meta.env.VITE_APP_GIT_TOKEN);
             console.log(type);
           }}
@@ -56,7 +44,7 @@ const Board: React.FC<BoardProps> = () => {
 export default Board;
 
 const getTitle = (type: string): string => {
-  let title: string = "홈";
+  let title: string = "";
   switch (type) {
     case "qna":
       title = "질문게시판";

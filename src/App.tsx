@@ -1,20 +1,21 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import Root from "@/pages/Root";
-import HomePage from "@/pages/Home";
-import BoardPage, { loader as BoardLoder, action as BoardAction } from "@/pages/Board";
+import HomePage, { loader as HomeLoader } from "@/pages/Home";
+import BoardPage, { loader as BoardLoader, action as BoardAction } from "@/pages/Board";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+
     children: [
-      { index: true, path: "", element: <HomePage title="홈"/> },
+      { index: true, path: "", element: <HomePage />, id: "home", loader: HomeLoader },
       {
         path: ":type",
-        element: <BoardPage/>,
-        id: "type",
-        loader: BoardLoder,
+        element: <BoardPage />,
+        id: "board",
+        loader: BoardLoader,
         action: BoardAction,
         // children: [
         //   { index: true, element: <EventsPage />, loader: eventsLoader },
