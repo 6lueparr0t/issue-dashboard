@@ -1,14 +1,15 @@
-import { Outlet, useNavigation } from "react-router-dom";
+import Navigation from "@/components/_common/Navigation";
+import { Outlet } from "react-router-dom";
 
 const Root = () => {
-  const navigation = useNavigation();
-  return <>
-  <main>
-    {/* idle / loading / submitting */}
-    {navigation.state === "loading" && <p>Loading ... </p>}
-    <Outlet />
-  </main>
-  </>
-}
+  return (
+    <>
+      <main>
+        <Navigation />
+        <Outlet />
+      </main>
+    </>
+  );
+};
 
 export default Root;
