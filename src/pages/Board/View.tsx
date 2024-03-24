@@ -1,17 +1,25 @@
 import React, { Suspense, useEffect } from "react";
-import { Await, defer, redirect, LoaderFunctionArgs, useRouteLoaderData } from "react-router-dom";
+import {
+  json,
+  Await,
+  defer,
+  redirect,
+  LoaderFunctionArgs,
+  ActionFunctionArgs,
+  useRouteLoaderData,
+} from "react-router-dom";
+
 import fp from "lodash/fp";
 
 import { RouteLoaderData } from "@/pages/pages.d";
-import { sleep, request, parseData } from "@/lib/utils";
+import { sleep, request, parseData, requestDelete } from "@/lib/utils";
 import { CATEGORIES } from "@/lib/constants";
-import { BoardProps } from "@/components/components.d";
 
-import { IssueViewer } from "@/components/Board/New/IssueViewer";
-import { IssueViewerButtonGroup } from "@/components/Board/New/IssueViewerButtonGroup";
+import { IssueViewer } from "@/components/Board/View/IssueViewer";
+import { IssueViewerButtonGroup } from "@/components/Board/View/IssueViewerButtonGroup";
 
-const Board: React.FC<BoardProps> = () => {
-  const { category, title, list } = useRouteLoaderData("board-new") as RouteLoaderData;
+const Board: React.FC = () => {
+  const { category, title, list } = useRouteLoaderData("board-view") as RouteLoaderData;
 
   useEffect(() => {
     document.title = title;
@@ -26,8 +34,8 @@ const Board: React.FC<BoardProps> = () => {
           <Await resolve={list}>
             {(list) => (
               <>
-                <IssueViewer category={category} issue={list[category]}/>
-                <IssueViewerButtonGroup category={category}/>
+                <IssueViewer category={category} issue={list[category]} />
+                <IssueViewerButtonGroup category={category} issue={list[category]}/>
               </>
             )}
           </Await>
@@ -51,7 +59,7 @@ const getList = async (
   const list: { [key: string]: object } = {};
 
   try {
-    const response = await request("get", category, option, issueNumber);
+    const response = await request(category, option, issueNumber);
 
     if (response.status === 200) {
       list[category] = parseData(response.data);
@@ -86,4 +94,25 @@ export async function loader({ params }: LoaderFunctionArgs) {
     title: title,
     list: list,
   });
+}
+
+export async function action({ request, params }: ActionFunctionArgs) {
+  await sleep();
+
+  const category = params?.category ?? "";
+  const formData = await request.formData();
+
+  // Deletion via fetcher
+  if (request.method === "DELETE") {
+    const issueId : string = String(formData.get("issueId") ?? "");
+    if(!issueId) {
+      throw json({ message: 'Could not delete issue.' }, { status: 500 });
+    }
+
+    const response = await requestDelete(issueId);
+    console.log(response);
+    return redirect(`/${category}`);
+  }
+
+  throw json({ message: 'Could not delete issue.' }, { status: 500 });
 }

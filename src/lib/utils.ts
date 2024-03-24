@@ -1,7 +1,10 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Octokit } from "octokit";
 import fp from "lodash/fp";
+
+import { Octokit } from "octokit";
+import { graphql } from "@octokit/graphql";
+
 import { PER_PAGE } from "@/lib/constants";
 
 export function cn(...inputs: ClassValue[]) {
@@ -12,11 +15,13 @@ export function sleep(n: number = 500) {
   return new Promise((r) => setTimeout(r, n));
 }
 
-export const makeQuery = (query : object) => "&"+fp.pipe(
-  fp.toPairs, // 입력 : { name: 'John', age: 30 }; // 출력: [['name', 'John'], ['age', 30]]
-  fp.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`),
-  fp.join("&")
-)(query);
+export const makeQuery = (query: object) =>
+  "&" +
+  fp.pipe(
+    fp.toPairs, // 입력 : { name: 'John', age: 30 }; // 출력: [['name', 'John'], ['age', 30]]
+    fp.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`),
+    fp.join("&")
+  )(query);
 
 const owner = import.meta.env.VITE_APP_GIT_OWNER;
 const auth = import.meta.env.VITE_APP_GIT_TOKEN;
@@ -28,26 +33,27 @@ const octokit = new Octokit({
 // Octokit.js
 // https://github.com/octokit/core.js#readme
 export const request = async (
-  method: string,
   category: string,
   option: { per_page?: number } = { per_page: PER_PAGE },
-  issueNumber: number = 0,
+  issueNumber: number = 0
 ) => {
   const repo = `issue-dashboard-${category}`;
 
-  const issuePath : string = issueNumber ? "/"+String(issueNumber) : "";
+  const issuePath: string = issueNumber ? "/" + String(issueNumber) : "";
 
   let optionQuery: string = "";
   if (!fp.isEqual(option, {})) {
-    optionQuery = "?" + fp.pipe(
-      fp.toPairs, // 입력 : { name: 'John', age: 30 }; // 출력: [['name', 'John'], ['age', 30]]
-      fp.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`),
-      fp.join("&")
-    )(option);
+    optionQuery =
+      "?" +
+      fp.pipe(
+        fp.toPairs, // 입력 : { name: 'John', age: 30 }; // 출력: [['name', 'John'], ['age', 30]]
+        fp.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`),
+        fp.join("&")
+      )(option);
   }
 
   const response = await octokit.request(
-    `${method.toUpperCase()} /repos/${owner}/${repo}/issues${issuePath}${optionQuery ?? ""}`,
+    `GET /repos/${owner}/${repo}/issues${issuePath}${optionQuery ?? ""}`,
     {
       owner: owner,
       repo: repo,
@@ -78,28 +84,58 @@ export const search = async (
     optionQuery = makeQuery(option);
   }
 
-  const response = await octokit.request(
-    `GET /search/issues?${qQuery ?? ""}${optionQuery ?? ""}`,
-    {
-      headers: {
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-    }
-  );
+  const response = await octokit.request(`GET /search/issues?${qQuery ?? ""}${optionQuery ?? ""}`, {
+    headers: {
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+  });
 
   return response;
 };
 
+interface DeleteIssueResult {
+  deleteIssue: {
+    clientMutationId: string;
+  };
+  status?: boolean;
+}
+
+export const requestDelete = async (nodeId: string): Promise<DeleteIssueResult> => {
+  try {
+    const graphqlResponse = (await graphql(
+      `
+        mutation {
+          deleteIssue(input: {issueId: "${nodeId}", clientMutationId: "delete"}) {
+            clientMutationId
+          }
+        }
+      `,
+      {
+        headers: {
+          authorization: `token ${auth}`,
+        },
+      }
+    )) as DeleteIssueResult;
+    graphqlResponse.status = true;
+    return graphqlResponse;
+  } catch (error) {
+    return { deleteIssue: { clientMutationId: "already delete" }, status: false };
+  }
+};
+
 export const parseData = (item: object) => ({
-  ...fp.pick(["number", "title", "body", "created_at", "updated_at"], item),
+  ...fp.pick(["number", "title", "body", "created_at", "updated_at", "node_id"], item),
   user: fp.pick(["avatar_url", "login"], fp.get("user", item)),
 });
 
 export const parseLastPage = (props: {
   data: { total_count?: number };
   headers: { link?: string };
-}) : number => Number(fp.pipe(
-  fp.find((link: string) => link.includes('rel="last"')),
-  fp.replace(/.*[?&]page=(\d+).*/, "$1"),
-  (result: number) => result || 0
-)(fp.split(",", props.headers.link)));
+}): number =>
+  Number(
+    fp.pipe(
+      fp.find((link: string) => link.includes('rel="last"')),
+      fp.replace(/.*[?&]page=(\d+).*/, "$1"),
+      (result: number) => result || 0
+    )(fp.split(",", props.headers.link))
+  );

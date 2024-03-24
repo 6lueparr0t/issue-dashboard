@@ -61,7 +61,7 @@ const getList = async (
   try {
     await Promise.all(
       fp.map(async (category) => {
-        const response = await request("get", category, option);
+        const response = await request(category, option);
 
         if (response.status === 200) {
           list[category] = response.data.map((item: object) => parseData(item));

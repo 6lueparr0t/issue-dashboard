@@ -100,7 +100,7 @@ const getList = async (
         list[category] = response.data.items.map((item: object) => parseData(item));
       }
     } else {
-      response = await request("get", category, option);
+      response = await request(category, option);
 
       if (response.status === 200) {
         last = parseLastPage(response);

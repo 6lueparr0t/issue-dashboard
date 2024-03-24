@@ -4,6 +4,7 @@ export type Issue = {
   body: string;
   created_at: string;
   updated_at: string;
+  node_id: string;
 
   user: {
     avatar_url: string;
@@ -29,5 +30,5 @@ export type Modal = {
   message: string;
   type: string;
   prevRef?: React.RefObject<HTMLInputElement> | null;
-  optionComponent?: React.ReactElement;
+  optionComponent?: React.ReactElement | null;
 };
