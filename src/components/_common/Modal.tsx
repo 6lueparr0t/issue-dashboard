@@ -1,23 +1,27 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import modalStore from "@/store/modal";
+import { Modal } from "@/components/components.d";
 
-// interface ModalProps extends React.PropsWithChildren {}
-// const Modal: React.FC<ModalProps> = ({ children }) => {
+interface ModalProps extends React.PropsWithChildren {
+  modal : Modal,
+}
 
-const Modal: React.FC = () => {
-  const { show, setShow, message, type, prevRef } = modalStore();
+const Modal: React.FC<ModalProps> = ({ modal }) => {
+  const { popModals } = modalStore();
+  const [isOpen, setIsOpen] = useState<boolean>(true)
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (show) {
+    if (isOpen) {
       // 모달이 열릴 때 모달 내부 첫 번째 요소에 포커스를 줌
       modalRef.current?.focus();
     }
-  }, [show]);
+  }, [isOpen]);
 
   const closeModal = () => {
-    setShow(false);
-    setTimeout(() => prevRef?.current?.focus(), 10);
+    setIsOpen(false);
+    setTimeout(() => modal?.prevRef?.current?.focus(), 10);
+    popModals();
   };
 
   const handleKeydown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -28,7 +32,7 @@ const Modal: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      {show && (
+      {isOpen && (
         <div
           ref={modalRef}
           tabIndex={0}
@@ -47,10 +51,10 @@ const Modal: React.FC = () => {
 
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <p className="text-xl font-bold m-4 text-center">{message}</p>
+                <p className="text-xl font-bold m-4 text-center">{modal.message}</p>
               </div>
               <div className="bg-white px-4 py-3 justify-center sm:px-6 sm:flex">
-                {type !== "confirm" ? (
+                {modal.type !== "confirm" ? (
                   <button
                     onClick={closeModal}
                     className="w-full inline-flex rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-500 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:ml-3 sm:w-auto sm:text-sm"

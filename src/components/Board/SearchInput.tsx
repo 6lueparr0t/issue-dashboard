@@ -17,7 +17,7 @@ import modalStore from "@/store/modal";
 export const SearchInput: React.FC = () => {
   const [searchType, setSearchType] = useState("title");
   const [inputValue, setInputValue] = useState("");
-  const {setModal} = modalStore();
+  const {pushModals} = modalStore();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -30,7 +30,7 @@ export const SearchInput: React.FC = () => {
   ) => {
     if (event.key === "Enter" || event.type === "click") {
       if (!inputRef?.current?.value) {
-        setModal(true, "검색어를 입력하세요.", "alert", inputRef);
+        pushModals({message : "검색어를 입력하세요.", type:"alert", prevRef:inputRef});
         event.preventDefault();
       }
     }

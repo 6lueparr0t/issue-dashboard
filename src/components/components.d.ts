@@ -25,3 +25,10 @@ export type PaginationProps = {
   page: number;
   query: string;
 };
+
+export type Modal = {
+  message: string,
+  type: string,
+  prevRef: React.RefObject<HTMLInputElement> | null,
+  optionComponent?: React.ReactElement
+}
