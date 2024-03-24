@@ -26,28 +26,26 @@ export const LatestIssuse: React.FC<ComponentProps> = ({ category, title, list }
       <h6 className="bold">
         <Link to={`/${category}`}>{title}</Link>
       </h6>
-      <div className="p-1">
-        <Card className="shadow-none">
-          <CardContent className="flex flex-col h-56 justify-self-center p-6">
-            {list.length <= 0 ? (
-              <div className="m-auto">등록된 게시글이 없습니다.</div>
-            ) : (
-              list.map((issue: Issue, index: number) => {
-                return (
-                  <div key={index} className="grid grid-cols-2 gap-2">
-                    <div className="truncate md:w-52 xl:w-[550px]">
-                      <Link to={`/${category}/${issue.number}`}>
-                        {issue.title}
-                      </Link>
-                      </div>
-                    <div className="text-right text-gray-500">{formatDateTime(issue.created_at)}</div>
-                  </div>
-                );
-              })
-            )}
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="shadow-none m-1">
+        <CardContent className="h-40 p-6 flex flex-col justify-self-center overflow-auto">
+          {list.length <= 0 ? (
+            <div className="m-auto">등록된 게시글이 없습니다.</div>
+          ) : (
+            list.map((issue: Issue, index: number) => {
+              return (
+                <div key={index} className="grid grid-cols-2 gap-2">
+                  <div className="truncate md:w-52 xl:w-[550px]">
+                    <Link to={`/${category}/${issue.number}`}>
+                      {issue.title}
+                    </Link>
+                    </div>
+                  <div className="text-right text-gray-500">{formatDateTime(issue.created_at)}</div>
+                </div>
+              );
+            })
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };

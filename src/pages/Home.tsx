@@ -8,7 +8,7 @@ import { LatestIssuse } from "@/components/Home/LatestIssuse";
 
 import { RouteLoaderData } from "@/pages/pages.d";
 import { sleep, request, parseData } from "@/lib/utils";
-import { CATEGORIES } from "@/lib/constants";
+import { HOME_PER_PAGE, CATEGORIES } from "@/lib/constants";
 
 const Home: React.FC = () => {
   const { title, list } = useRouteLoaderData("home") as RouteLoaderData;
@@ -85,7 +85,7 @@ const getList = async (
 export async function loader() {
   await sleep();
 
-  const { list } = await getList({ per_page: 5 });
+  const { list } = await getList({ per_page: HOME_PER_PAGE });
   // getList 앞에 await 를 주면 event 를 기다렸다가 리스트를 출력한다.
   return defer({
     category: "home",
