@@ -15,10 +15,12 @@ const Modal: React.FC<ModalProps> = ({ modal, index }) => {
   useEffect(() => {
     const interval = setInterval(()=>{
       modalRef.current?.focus();
+      document.body.style.overflow = 'hidden';
     }, 10);
 
     return ()=>{
       clearInterval(interval);
+      document.body.style.overflow = 'auto';
     }
   }, []);
 
@@ -30,20 +32,20 @@ const Modal: React.FC<ModalProps> = ({ modal, index }) => {
     }, 10);
   };
 
-  const handleKeydown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const keyDownLockHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
       closeModal();
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-0">
       {isOpen && (
         <div
           ref={modalRef}
           tabIndex={0}
           className={`fixed z-${Number(10000+index)} inset-0 overflow-y-auto`}
-          onKeyDown={handleKeydown}
+          onKeyDown={keyDownLockHandler}
         >
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity" aria-hidden="true">

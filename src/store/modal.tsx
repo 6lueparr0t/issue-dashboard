@@ -12,7 +12,6 @@ const modalStore = create<Store>()((set) => ({
   pushModals: (modal: Modal) => {
     set((state) => {
       state.modals.push(modal);
-      console.log(state.modals);
       return { modals: state.modals };
     });
   },

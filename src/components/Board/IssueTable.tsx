@@ -31,9 +31,9 @@ export const IssueTable: React.FC<BoardProps> = ({ category, list }) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {fp.map((row: Issue, index:number) => {
+        {fp.map((row: Issue) => {
           return (
-            <TableRow key={`${category}-${index}`}>
+            <TableRow key={`${category}-${row.number}`}>
               <TableCell className="font-medium min-w-16">{row.number}</TableCell>
               <TableCell className="block truncate mt-2 w-60 sm:w-80 md:w-[500px] xl:w-8/12">{row.title}</TableCell>
               <TableCell>

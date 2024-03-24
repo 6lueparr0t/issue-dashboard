@@ -12,11 +12,11 @@ const Root = () => {
       <main>
         <Navigation />
         <Outlet />
-        <div className="h-0">
-          {modals.map((modal, index) => (
-            <Modal key={`modal-${index}`} modal={modal} index={index}/>
-          ))}
-        </div>
+        {modals.map((modal, index) => (
+          <div key={`modal-${index}`} className="h-0">
+            <Modal modal={modal} index={index}/>
+          </div>
+        ))}
       </main>
     </>
   );
