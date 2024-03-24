@@ -12,6 +12,12 @@ export function sleep(n: number = 500) {
   return new Promise((r) => setTimeout(r, n));
 }
 
+export const makeQuery = (query : object) => "&"+fp.pipe(
+  fp.toPairs, // 입력 : { name: 'John', age: 30 }; // 출력: [['name', 'John'], ['age', 30]]
+  fp.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`),
+  fp.join("&")
+)(query);
+
 const owner = import.meta.env.VITE_APP_GIT_OWNER;
 const auth = import.meta.env.VITE_APP_GIT_TOKEN;
 
@@ -66,15 +72,11 @@ export const search = async (
 
   let optionQuery: string = "";
   if (!fp.isEqual(option, {})) {
-    optionQuery = fp.pipe(
-      fp.toPairs, // 입력 : { name: 'John', age: 30 }; // 출력: [['name', 'John'], ['age', 30]]
-      fp.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`),
-      fp.join("&")
-    )(option);
+    optionQuery = makeQuery(option);
   }
 
   const response = await octokit.request(
-    `GET /search/issues?${qQuery ?? ""}&${optionQuery ?? ""}`,
+    `GET /search/issues?${qQuery ?? ""}${optionQuery ?? ""}`,
     {
       headers: {
         "X-GitHub-Api-Version": "2022-11-28",
@@ -90,19 +92,11 @@ export const parseData = (item: object) => ({
   user: fp.pick(["avatar_url", "login"], fp.get("user", item)),
 });
 
-export const parseTotalCount = (props: {
+export const parseLastPage = (props: {
   data: { total_count?: number };
   headers: { link?: string };
-}) => {
-  let response;
-  if (fp.has("data.total_count", props)) {
-    response = props.data.total_count;
-  } else {
-    response = fp.pipe(
-      fp.find((link: string) => link.includes('rel="last"')),
-      fp.replace(/.*[?&]page=(\d+).*/, "$1"),
-      (result:number) => Number(result) * PER_PAGE || "Last link not found."
-    )(fp.split(",", props.headers.link));
-  }
-  return response;
-};
+}) : number => Number(fp.pipe(
+  fp.find((link: string) => link.includes('rel="last"')),
+  fp.replace(/.*[?&]page=(\d+).*/, "$1"),
+  (result: number) => result || 0
+)(fp.split(",", props.headers.link)));

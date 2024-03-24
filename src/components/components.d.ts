@@ -15,4 +15,13 @@ export type ComponentProps = {
   category: string;
   title: string;
   list: ListRow[];
+  last?: number;
+  page?: number;
+};
+
+export type PaginationProps = {
+  category: string;
+  last: number;
+  page: number;
+  query: string;
 };

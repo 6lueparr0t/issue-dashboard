@@ -12,4 +12,4 @@ export const CATEGORIES: {
 };
 
 export const HOME_PER_PAGE = 5;
-export const PER_PAGE = 2;
+export const PER_PAGE = 1;

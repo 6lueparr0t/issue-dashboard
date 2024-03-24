@@ -1,46 +1,65 @@
 import React, { Suspense, useEffect } from "react";
 import {
+  Link,
   Await,
   defer,
   redirect,
-  ActionFunctionArgs,
   LoaderFunctionArgs,
   useRouteLoaderData,
 } from "react-router-dom";
 import fp from "lodash/fp";
 
 import { RouteLoaderData } from "@/pages/pages.d";
-import { sleep, request, search, parseData, parseTotalCount } from "@/lib/utils";
+import { sleep, request, search, parseData, parseLastPage, makeQuery } from "@/lib/utils";
 import { CATEGORIES, PER_PAGE } from "@/lib/constants";
 
+import { Button } from "@/components/ui/button";
+import { IssuePagination } from "@/components/Board/IssuePagination";
+
+import { SearchInput } from "@/components/Board/SearchInput";
+
 const Board: React.FC = () => {
-  const { category, title, list, total, page } = useRouteLoaderData("board") as RouteLoaderData;
+  const { category, title, list, query, last, page } = useRouteLoaderData(
+    "board"
+  ) as RouteLoaderData;
 
   useEffect(() => {
     document.title = title;
   }, [title]);
 
-  console.log("category : ", category);
-  console.log("list : ", list);
-  console.log("total : ", total);
-  console.log("page : ", page);
-
   return (
-    <>
-      <div className="flex flex-col justify-center items-center p-8">
+    <div className="p-8">
+      <div className="text-2xl text-left">{CATEGORIES[category].title}</div>
+      <div className="my-4 flex flex-row gap-4 justify-between">
+        <SearchInput />
+        <div>
+          <Link to="/home">
+            <Button>글쓰기</Button>
+          </Link>
+        </div>
+      </div>
+      <div className="flex flex-col justify-center items-center">
         <Suspense fallback={<div style={{ textAlign: "center" }}>Loading...</div>}>
-          <Await resolve={list}>
-            {(list) => (
+          <Await resolve={last}>
+            {(last) => (
               <>
-                <div className="w-full flex flex-row justify-evenly items-center mt-20">
-                  {/* {list[category].length} */}
+                <div className="w-full flex flex-col justify-evenly items-center mt-20">
+                  {list[category].length > 0 ? <></> : <>등록된 게시글이 없습니다.</>}
+                  {list[category].length > 0 && (
+                    <IssuePagination
+                      category={category}
+                      last={last}
+                      page={page ?? 1}
+                      query={query}
+                    />
+                  )}
                 </div>
               </>
             )}
           </Await>
         </Suspense>
       </div>
-    </>
+    </div>
   );
 };
 
@@ -49,30 +68,32 @@ export default Board;
 const getList = async (
   category: string,
   query: { keyword: string; in: string } = { keyword: "", in: "title" },
-  option: object = {}
+  option: { page?: number; per_page?: number } = {}
 ): Promise<{
   list: { [key: string]: object };
-  total: number;
+  last: number;
   status?: number;
   message?: object;
 }> => {
   const list: { [key: string]: object } = {};
 
-  let total: number = 0;
+  let last: number = 0;
 
   try {
     let response;
+
     if (fp.get("keyword", query) !== "") {
       response = await search(category, query, option);
 
       if (response.status === 200) {
-        total = parseTotalCount(response);
+        last = parseLastPage(response);
         list[category] = response.data.items.map((item: object) => parseData(item));
       }
     } else {
       response = await request("get", category, option);
+
       if (response.status === 200) {
-        total = parseTotalCount(response);
+        last = parseLastPage(response);
         list[category] = response.data.map((item: object) => parseData(item));
       }
     }
@@ -81,13 +102,13 @@ const getList = async (
   } catch (error) {
     return {
       list: {},
-      total: 0,
+      last: 0,
       status: 500,
       message: error ?? "",
     };
   }
 
-  return { list: list, total: total };
+  return { list: list, last: last };
 };
 
 // 컴포넌트 마다 loader 를 두어, App.js 의 Router 에서 선언한다.
@@ -109,25 +130,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const title = fp.get(`${category}.title`, CATEGORIES);
 
-  const { list, total } = await getList(category, query, { per_page: PER_PAGE });
+  const { list, last } = await getList(category, query, { page: page, per_page: PER_PAGE });
 
   return defer({
     category: category,
     title: title,
     list: list,
-    total: total,
+    query: query.keyword === "" ? "" : makeQuery(query),
+    last: last ? last : page, // last 가 없는 경우, 현재 페이지가 last
     page: page,
-  });
-}
-
-export async function action({ request }: ActionFunctionArgs) {
-  await sleep();
-
-  const method = request.method;
-  const data = await request.formData();
-
-  return new Response(null, {
-    status: 302,
-    headers: { Location: "/qna" },
   });
 }
