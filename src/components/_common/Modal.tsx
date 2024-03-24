@@ -15,12 +15,10 @@ const Modal: React.FC<ModalProps> = ({ modal, index }) => {
   useEffect(() => {
     const interval = setInterval(()=>{
       modalRef.current?.focus();
-      document.body.style.overflow = 'hidden';
     }, 10);
 
     return ()=>{
       clearInterval(interval);
-      document.body.style.overflow = 'auto';
     }
   }, []);
 

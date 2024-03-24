@@ -12,13 +12,13 @@ const modalStore = create<Store>()((set) => ({
   pushModals: (modal: Modal) => {
     set((state) => {
       state.modals.push(modal);
-      return { modals: state.modals };
+      return { modals: [...state.modals] };
     });
   },
   popModals: () => {
     set((state) => {
       state.modals.pop();
-      return { modals: state.modals };
+      return { modals: [...state.modals] };
     });
   },
 }));
