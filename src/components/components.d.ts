@@ -11,12 +11,10 @@ export type Issue = {
   }
 }
 
-export type ComponentProps = {
+export type BoardProps = {
   category: string;
-  title: string;
   list: ListRow[];
-  last?: number;
-  page?: number;
+  title?: string;
 };
 
 export type PaginationProps = {

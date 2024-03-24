@@ -38,6 +38,7 @@ export const SearchInput: React.FC = () => {
 
   const resetHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     inputRef.current!.value = "";
+    setInputValue("");
     event.preventDefault();
   };
 

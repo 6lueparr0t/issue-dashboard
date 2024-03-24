@@ -14,9 +14,10 @@ import { sleep, request, search, parseData, parseLastPage, makeQuery } from "@/l
 import { CATEGORIES, PER_PAGE } from "@/lib/constants";
 
 import { Button } from "@/components/ui/button";
-import { IssuePagination } from "@/components/Board/IssuePagination";
 
 import { SearchInput } from "@/components/Board/SearchInput";
+import { IssueTable } from "@/components/Board/IssueTable";
+import { IssuePagination } from "@/components/Board/IssuePagination";
 
 const Board: React.FC = () => {
   const { category, title, list, query, last, page } = useRouteLoaderData(
@@ -39,6 +40,15 @@ const Board: React.FC = () => {
         </div>
       </div>
       <div className="flex flex-col justify-center items-center">
+      <Suspense fallback={<div style={{ textAlign: "center" }}>Loading...</div>}>
+          <Await resolve={list}>
+            {(list) => (
+              <>
+                <IssueTable category={category} list={list[category]} />
+              </>
+            )}
+          </Await>
+        </Suspense>
         <Suspense fallback={<div style={{ textAlign: "center" }}>Loading...</div>}>
           <Await resolve={last}>
             {(last) => (

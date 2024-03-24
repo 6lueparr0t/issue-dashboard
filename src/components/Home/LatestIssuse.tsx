@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ComponentProps, Issue } from "@/components/components.d";
+import { BoardProps, Issue } from "@/components/components.d";
 import { Card, CardContent } from "@/components/ui/card";
 
 import dayjs from "dayjs";
@@ -20,7 +20,7 @@ const formatDateTime = (dateTimeString: string): string => {
   }
 };
 
-export const LatestIssuse: React.FC<ComponentProps> = ({ category, title, list }) => {
+export const LatestIssuse: React.FC<BoardProps> = ({ category, list, title }) => {
   return (
     <div className="flex-1 xl:max-w-[768px] flex flex-col">
       <h6 className="bold">
