@@ -2,11 +2,7 @@ import React from "react";
 import { BoardProps, Issue } from "@/components/components.d";
 import fp from "lodash/fp";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {
   Table,
@@ -18,6 +14,7 @@ import {
 } from "@/components/ui/table";
 
 import dayjs from "dayjs";
+import { Link } from "react-router-dom";
 
 export const IssueTable: React.FC<BoardProps> = ({ category, list }) => {
   return (
@@ -35,7 +32,9 @@ export const IssueTable: React.FC<BoardProps> = ({ category, list }) => {
           return (
             <TableRow key={`${category}-${row.number}`}>
               <TableCell className="font-medium min-w-16">{row.number}</TableCell>
-              <TableCell className="block truncate mt-2 w-60 sm:w-80 md:w-[500px] xl:w-8/12">{row.title}</TableCell>
+              <TableCell className="block truncate mt-2 w-60 sm:w-80 md:w-[500px] xl:w-8/12">
+                <Link to={`/${category}/${row.number}`}>{row.title}</Link>
+              </TableCell>
               <TableCell>
                 <div className="flex gap-4 items-center">
                   <Avatar>
@@ -45,7 +44,9 @@ export const IssueTable: React.FC<BoardProps> = ({ category, list }) => {
                   {row.user.login}
                 </div>
               </TableCell>
-              <TableCell className="text-right">{dayjs(row.created_at).format("YYYY-MM-DD HH:mm")}</TableCell>
+              <TableCell className="text-right">
+                {dayjs(row.created_at).format("YYYY-MM-DD HH:mm")}
+              </TableCell>
             </TableRow>
           );
         }, list)}

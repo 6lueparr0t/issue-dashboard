@@ -30,13 +30,16 @@ const octokit = new Octokit({
 export const request = async (
   method: string,
   category: string,
-  option: { per_page?: number } = { per_page: PER_PAGE }
+  option: { per_page?: number } = { per_page: PER_PAGE },
+  issueNumber: number = 0,
 ) => {
   const repo = `issue-dashboard-${category}`;
 
+  const issuePath : string = issueNumber ? "/"+String(issueNumber) : "";
+
   let optionQuery: string = "";
   if (!fp.isEqual(option, {})) {
-    optionQuery = fp.pipe(
+    optionQuery = "?" + fp.pipe(
       fp.toPairs, // 입력 : { name: 'John', age: 30 }; // 출력: [['name', 'John'], ['age', 30]]
       fp.map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`),
       fp.join("&")
@@ -44,7 +47,7 @@ export const request = async (
   }
 
   const response = await octokit.request(
-    `${method.toUpperCase()} /repos/${owner}/${repo}/issues?${optionQuery ?? ""}`,
+    `${method.toUpperCase()} /repos/${owner}/${repo}/issues${issuePath}${optionQuery ?? ""}`,
     {
       owner: owner,
       repo: repo,

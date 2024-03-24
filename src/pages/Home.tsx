@@ -81,7 +81,7 @@ const getList = async (
   return {list};
 };
 
-// export async function loader({ params }: LoaderFunctionArgs) {
+// 컴포넌트 마다 loader 를 두어, App.js 의 Router 에서 선언한다.
 export async function loader() {
   await sleep();
 

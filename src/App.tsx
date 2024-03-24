@@ -3,6 +3,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Root from "@/pages/Root";
 import HomePage, { loader as HomeLoader } from "@/pages/Home";
 import BoardPage, { loader as BoardLoader } from "@/pages/Board";
+import BoardViewPage, { loader as BoardViewLoader } from "@/pages/Board/View";
 // import BoardPage, { loader as BoardLoader, action as BoardAction } from "@/pages/Board";
 
 const router = createBrowserRouter([
@@ -11,14 +12,12 @@ const router = createBrowserRouter([
     element: <Root />,
 
     children: [
-      { index: true, path: "", element: <HomePage />, id: "home", loader: HomeLoader },
+      { index: true, path: "", id: "home", element: <HomePage />, loader: HomeLoader },
       {
         path: ":category",
-        element: <BoardPage />,
         id: "board",
+        element: <BoardPage />,
         loader: BoardLoader,
-        // children: [
-        //   { index: true, element: <EventsPage />, loader: eventsLoader },
         //   {
         //     path: ":eventId",
         //     id: "event-detail",
@@ -39,7 +38,13 @@ const router = createBrowserRouter([
         //   { path: "new", element: <NewEventPage />, action: manipulateEventAction },
         // ],
       },
-    ],
+      {
+        path: ":category/:issueNumber",
+        id: "board-new",
+        element: <BoardViewPage />,
+        loader: BoardViewLoader,
+      }
+    ]
   },
 ]);
 

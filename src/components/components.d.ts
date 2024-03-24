@@ -1,19 +1,20 @@
 export type Issue = {
   number: number;
-  title : string;
-  body : string;
-  created_at : string;
-  updated_at : string;
+  title: string;
+  body: string;
+  created_at: string;
+  updated_at: string;
 
-  user : {
-    avatar_url : string;
-    login : string;
-  }
-}
+  user: {
+    avatar_url: string;
+    login: string;
+  };
+};
 
 export type BoardProps = {
   category: string;
-  list: ListRow[];
+  list?: ListRow[];
+  issue?: Issue;
   title?: string;
 };
 
@@ -25,8 +26,8 @@ export type PaginationProps = {
 };
 
 export type Modal = {
-  message: string,
-  type: string,
-  prevRef?: React.RefObject<HTMLInputElement> | null,
-  optionComponent?: React.ReactElement
-}
+  message: string;
+  type: string;
+  prevRef?: React.RefObject<HTMLInputElement> | null;
+  optionComponent?: React.ReactElement;
+};
