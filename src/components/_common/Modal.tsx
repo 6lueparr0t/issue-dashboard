@@ -4,24 +4,30 @@ import { Modal } from "@/components/components.d";
 
 interface ModalProps extends React.PropsWithChildren {
   modal : Modal,
+  index : number,
 }
 
-const Modal: React.FC<ModalProps> = ({ modal }) => {
+const Modal: React.FC<ModalProps> = ({ modal, index }) => {
   const { popModals } = modalStore();
   const [isOpen, setIsOpen] = useState<boolean>(true)
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isOpen) {
-      // 모달이 열릴 때 모달 내부 첫 번째 요소에 포커스를 줌
+    const interval = setInterval(()=>{
       modalRef.current?.focus();
+    }, 10);
+
+    return ()=>{
+      clearInterval(interval);
     }
-  }, [isOpen]);
+  }, []);
 
   const closeModal = () => {
     setIsOpen(false);
-    setTimeout(() => modal?.prevRef?.current?.focus(), 10);
     popModals();
+    setTimeout(() => {
+      modal?.prevRef?.current?.focus();
+    }, 10);
   };
 
   const handleKeydown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -36,7 +42,7 @@ const Modal: React.FC<ModalProps> = ({ modal }) => {
         <div
           ref={modalRef}
           tabIndex={0}
-          className="fixed z-10 inset-0 overflow-y-auto"
+          className={`fixed z-${Number(10000+index)} inset-0 overflow-y-auto`}
           onKeyDown={handleKeydown}
         >
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">

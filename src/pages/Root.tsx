@@ -14,7 +14,7 @@ const Root = () => {
         <Outlet />
         <div className="h-0">
           {modals.map((modal, index) => (
-            <Modal key={index} modal={modal}/>
+            <Modal key={`modal-${index}`} modal={modal} index={index}/>
           ))}
         </div>
       </main>

@@ -27,6 +27,6 @@ export type PaginationProps = {
 export type Modal = {
   message: string,
   type: string,
-  prevRef: React.RefObject<HTMLInputElement> | null,
+  prevRef?: React.RefObject<HTMLInputElement> | null,
   optionComponent?: React.ReactElement
 }

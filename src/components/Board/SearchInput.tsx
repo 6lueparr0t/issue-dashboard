@@ -31,6 +31,8 @@ export const SearchInput: React.FC = () => {
     if (event.key === "Enter" || event.type === "click") {
       if (!inputRef?.current?.value) {
         pushModals({message : "검색어를 입력하세요.", type:"alert", prevRef:inputRef});
+        // 모달 스택 확인
+        // pushModals({message : "검색어를 입력하세요.", type:"alert", prevRef:inputRef});
         event.preventDefault();
       }
     }
