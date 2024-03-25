@@ -10,7 +10,7 @@ import {
 import fp from "lodash/fp";
 
 import { RouteLoaderData } from "@/pages/pages.d";
-import { sleep, request, search, parseData, parseLastPage, makeQuery } from "@/lib/utils";
+import { sleep, requestList, search, parseData, parseLastPage, makeQuery } from "@/lib/utils";
 import { CATEGORIES, PER_PAGE } from "@/lib/constants";
 
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ import { SearchInput } from "@/components/Board/SearchInput";
 import { IssueTable } from "@/components/Board/IssueTable";
 import { IssuePagination } from "@/components/Board/IssuePagination";
 
-const Board: React.FC = () => {
+const BoardPage: React.FC = () => {
   const { category, title, list, query, last, page } = useRouteLoaderData(
     "board"
   ) as RouteLoaderData;
@@ -31,10 +31,10 @@ const Board: React.FC = () => {
   return (
     <div className="p-8">
       <div className="text-2xl text-left">{CATEGORIES[category].title}</div>
-      <div className="my-4 flex flex-row gap-4 justify-between">
+      <div className="my-4 flex flex-row justify-between">
         <SearchInput />
         <div>
-          <Link to="/home">
+          <Link to={`/${category}/new`}>
             <Button>글쓰기</Button>
           </Link>
         </div>
@@ -73,7 +73,7 @@ const Board: React.FC = () => {
   );
 };
 
-export default Board;
+export default BoardPage;
 
 const getList = async (
   category: string,
@@ -100,7 +100,7 @@ const getList = async (
         list[category] = response.data.items.map((item: object) => parseData(item));
       }
     } else {
-      response = await request(category, option);
+      response = await requestList(category, option);
 
       if (response.status === 200) {
         last = parseLastPage(response);

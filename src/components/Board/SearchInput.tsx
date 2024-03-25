@@ -60,7 +60,7 @@ export const SearchInput: React.FC = () => {
             </SelectContent>
           </Select>
         </div>
-        <Form className="flex w-full max-w-sm space-x-2" method={"GET"}>
+        <Form className="flex w-full max-w-sm gap-4" method={"GET"}>
           <input type="hidden" name="in" value={searchType} />
           <Input type="text" name="keyword" ref={inputRef} onChange={changeEventHandler} />
           <Button type="submit" onClick={keywordEventHandler}>

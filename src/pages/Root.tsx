@@ -22,13 +22,6 @@ const Root = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
-  // const blocker = useBlocker(
-  //   ({ currentLocation, nextLocation }) => currentLocation.pathname !== nextLocation.pathname
-  // );
-  // useEffect(() => {
-  //   console.log(blocker.state);
-  // }, [blocker]);
-
   return (
     <>
       <main>

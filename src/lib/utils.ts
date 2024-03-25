@@ -32,7 +32,7 @@ const octokit = new Octokit({
 
 // Octokit.js
 // https://github.com/octokit/core.js#readme
-export const request = async (
+export const requestList = async (
   category: string,
   option: { per_page?: number } = { per_page: PER_PAGE },
   issueNumber: number = 0
@@ -121,6 +121,59 @@ export const requestDelete = async (nodeId: string): Promise<DeleteIssueResult> 
   } catch (error) {
     return { deleteIssue: { clientMutationId: "already delete" }, status: false };
   }
+};
+
+export const requestCreate = async (
+  category: string,
+  issue: {
+    title: string,
+    body: string,
+  },
+) => {
+  const repo = `issue-dashboard-${category}`;
+
+  const response = await octokit.request(
+    `POST /repos/${owner}/${repo}/issues`,
+    {
+      owner: owner,
+      repo: repo,
+      title: issue.title,
+      body: issue.body,
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    }
+  );
+
+  return response;
+};
+
+export const requestPatch = async (
+  category: string,
+  issue: {
+    title: string,
+    body: string,
+  },
+  issueNumber: number = 0,
+) => {
+  const repo = `issue-dashboard-${category}`;
+
+  const issuePath: string = issueNumber ? "/" + String(issueNumber) : "";
+
+  const response = await octokit.request(
+    `PATCH /repos/${owner}/${repo}/issues${issuePath}`,
+    {
+      owner: owner,
+      repo: repo,
+      title: issue.title,
+      body: issue.body,
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    }
+  );
+
+  return response;
 };
 
 export const parseData = (item: object) => ({

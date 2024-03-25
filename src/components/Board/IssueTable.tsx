@@ -36,7 +36,7 @@ export const IssueTable: React.FC<BoardProps> = ({ category, list }) => {
                 <Link to={`/${category}/${row.number}`}>{row.title}</Link>
               </TableCell>
               <TableCell>
-                <div className="flex gap-4 items-center">
+                <div className="flex gap-2 items-center">
                   <Avatar>
                     <AvatarImage src={row.user.avatar_url} alt={`@${row.user.login}`} />
                     <AvatarFallback>{row.user.login}</AvatarFallback>

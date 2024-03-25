@@ -14,6 +14,7 @@ export type Issue = {
 
 export type BoardProps = {
   category: string;
+  method?: "POST" | "PATCH" | "DELETE";
   list?: ListRow[];
   issue?: Issue;
   title?: string;
@@ -31,4 +32,5 @@ export type Modal = {
   type: string;
   prevRef?: React.RefObject<HTMLInputElement> | null;
   optionComponent?: React.ReactElement | null;
+  handler?: () => void;
 };

@@ -4,13 +4,16 @@ import Root from "@/pages/Root";
 import HomePage, { loader as HomeLoader } from "@/pages/Home";
 import BoardPage, { loader as BoardLoader } from "@/pages/Board";
 import BoardViewPage, { loader as BoardViewLoader, action as BoardViewAction } from "@/pages/Board/View";
-// import BoardPage, { loader as BoardLoader, action as BoardAction } from "@/pages/Board";
+import BoardNewPage, { loader as BoardNewLoader, action as BoardNewAction } from "@/pages/Board/New";
+import BoardEditPage, { loader as BoardEditLoader, action as BoardEditAction } from "@/pages/Board/Edit";
+
+import ErrorPage from "@/pages/Error";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
-
+    errorElement: <ErrorPage />,
     children: [
       { index: true, path: "", id: "home", element: <HomePage />, loader: HomeLoader },
       {
@@ -26,18 +29,20 @@ const router = createBrowserRouter([
         loader: BoardViewLoader,
         action: BoardViewAction,
       },
-      // {
-      //   path: ":category/:issueNumber/edit",
-      //   id: "board-edit",
-      //   element: <BoardViewPage />,
-      //   loader: BoardViewLoader,
-      // },
-      // {
-      //   path: ":category/:issueNumber/new",
-      //   id: "board-new",
-      //   element: <BoardViewPage />,
-      //   loader: BoardViewLoader,
-      // }
+      {
+        path: ":category/new",
+        id: "board-new",
+        element: <BoardNewPage />,
+        loader: BoardNewLoader,
+        action: BoardNewAction,
+      },
+      {
+        path: ":category/:issueNumber/edit",
+        id: "board-edit",
+        element: <BoardEditPage />,
+        loader: BoardEditLoader,
+        action: BoardEditAction,
+      },
     ]
   },
 ]);

@@ -11,12 +11,12 @@ import {
 import fp from "lodash/fp";
 
 import { RouteLoaderData } from "@/pages/pages.d";
-import { sleep, requestCreate } from "@/lib/utils";
+import { sleep, requestList, requestPatch, parseData } from "@/lib/utils";
 import { CATEGORIES } from "@/lib/constants";
 import { IssueEditor } from "@/components/Board/Common/IssueEditor";
 
-const BoardNewPage: React.FC = () => {
-  const { category, title } = useRouteLoaderData("board-new") as RouteLoaderData;
+const BoardEditPage: React.FC = () => {
+  const { category, title, list } = useRouteLoaderData("board-edit") as RouteLoaderData;
 
   useEffect(() => {
     document.title = title;
@@ -40,13 +40,43 @@ const BoardNewPage: React.FC = () => {
     <div className="p-8 xl:w-1/2 m-auto">
       <div className="text-2xl text-left">게시판</div>
       <div className="flex flex-col">
-        <IssueEditor category={category} method={"POST"} />
+        <IssueEditor category={category} method={"PATCH"} issue={list[category]}/>
       </div>
     </div>
   );
 };
 
-export default BoardNewPage;
+export default BoardEditPage;
+
+const getList = async (
+  category: string,
+  option: { page?: number; per_page?: number } = {},
+  issueNumber: number
+): Promise<{
+  list: { [key: string]: object };
+  status?: number;
+  message?: object;
+}> => {
+  const list: { [key: string]: object } = {};
+
+  try {
+    const response = await requestList(category, option, issueNumber);
+
+    if (response.status === 200) {
+      list[category] = parseData(response.data);
+    } else {
+      throw new Error("Could not fetch details for selected event.");
+    }
+  } catch (error) {
+    return {
+      list: {},
+      status: 500,
+      message: error ?? "",
+    };
+  }
+
+  return { list: list };
+};
 
 export async function loader({ params }: LoaderFunctionArgs) {
   await sleep();
@@ -55,9 +85,14 @@ export async function loader({ params }: LoaderFunctionArgs) {
   if (fp.has(category, CATEGORIES) === false) {
     return redirect("/");
   }
+  const issueNumber: number = Number(params?.issueNumber ?? 0);
+
+  const { list } = await getList(category, {}, issueNumber);
+
   return defer({
     category: category,
     title: "글쓰기",
+    list: list,
   });
 }
 
@@ -65,9 +100,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
   await sleep();
 
   const category = params?.category ?? "";
+  const issueNumber: number = Number(params?.issueNumber ?? 0);
   const formData = await request.formData();
 
-  if (request.method === "POST") {
+  if (request.method === "PATCH") {
     const title: string = String(formData.get("title") ?? "");
     const body: string = String(formData.get("body") ?? "");
 
@@ -75,14 +111,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
       throw json({ message: `Title(${title}) or Body(${body}) is missing.` }, { status: 500 });
     }
 
-    const response = await requestCreate(category, { title: title, body: body });
-    if (response?.status !== 201) {
-      throw json({ message: "Could not create issue." }, { status: response?.status ?? 500 });
+    const response = await requestPatch(category, { title: title, body: body }, issueNumber);
+    if (response?.status !== 200) {
+      throw json({ message: "Could not patch issue." }, { status: response?.status ?? 500 });
     }
 
-    const issueNumber = response.data.number;
     return redirect(`/${category}/${issueNumber}`);
   }
 
-  throw json({ message: "Could not create issue." }, { status: 500 });
+  throw json({ message: "Could not patch issue." }, { status: 500 });
 }

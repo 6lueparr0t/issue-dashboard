@@ -53,8 +53,8 @@ const Modal: React.FC<ModalProps> = ({ modal, index }) => {
           ></span>
 
           <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <div className="bg-white p-6">
-              <p className="text-xl font-bold m-4 text-center">{modal.message}</p>
+            <div className="bg-white mt-8">
+              <p className="text-xl font-bold text-center">{modal.message}</p>
             </div>
             <div className="bg-white py-4 justify-around sm:px-6 sm:flex">
               {modal.type === "alert" && (

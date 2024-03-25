@@ -1,6 +1,5 @@
 import React from "react";
-import { Form } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Form, Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { BoardProps } from "@/components/components.d";
@@ -10,7 +9,7 @@ import modalStore from "@/store/modal";
 export const IssueViewerButtonGroup: React.FC<BoardProps> = ({ category, issue }) => {
   const { pushModals, popModals } = modalStore();
 
-  const confirmCompoenent = (
+  const confirmComponent = (
     <>
       <Button onClick={()=>popModals()}>
         취소
@@ -29,7 +28,7 @@ export const IssueViewerButtonGroup: React.FC<BoardProps> = ({ category, issue }
       message: "삭제하시겠습니까?",
       type: "confirm",
       prevRef: null,
-      optionComponent: confirmCompoenent,
+      optionComponent: confirmComponent,
     });
     event.preventDefault();
   };

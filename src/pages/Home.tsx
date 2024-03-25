@@ -7,10 +7,10 @@ import { ImageCarousel } from "@/components/Home/ImageCarousel";
 import { LatestIssuse } from "@/components/Home/LatestIssuse";
 
 import { RouteLoaderData } from "@/pages/pages.d";
-import { sleep, request, parseData } from "@/lib/utils";
+import { sleep, requestList, parseData } from "@/lib/utils";
 import { HOME_PER_PAGE, CATEGORIES } from "@/lib/constants";
 
-const Home: React.FC = () => {
+const HomePage: React.FC = () => {
   const { title, list } = useRouteLoaderData("home") as RouteLoaderData;
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default HomePage;
 
 const getList = async (
   option: object
@@ -61,7 +61,7 @@ const getList = async (
   try {
     await Promise.all(
       fp.map(async (category) => {
-        const response = await request(category, option);
+        const response = await requestList(category, option);
 
         if (response.status === 200) {
           list[category] = response.data.map((item: object) => parseData(item));
