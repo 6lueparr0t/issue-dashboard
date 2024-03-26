@@ -16,7 +16,7 @@ export type BoardProps = {
   category: string;
   method?: "POST" | "PATCH" | "DELETE";
   issue?: Issue;
-  list?: ListRow[];
+  list?: Issue[] | undefined;
   title?: string;
 };
 

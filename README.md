@@ -66,28 +66,47 @@ pnpm install
 pnpm run dev
 ```
 
-### 4. 브라우저에서 <http://localhost:5173> 접속
+### 4. <http://localhost:5173> 접속
 
- 환경에 따라 포트가 변경될 수 있음
+> 환경에 따라 포트가 변경될 수 있음
 
-## 작업 화면
+## Sample Page
 
-### 홈 화면
+### 홈
 
 ![01_home](./images/01_home.png)
 
-### 게시판 화면
+### 게시판 목록 및 empty 케이스
 
 ![02_board](./images/02_board.png)
 ![03_board_empty](./images/03_board_empty.png)
+
+### 게시판 목록 - 검색
+
 ![04_search](./images/04_search.png)
 ![05_search2](./images/05_search2.png)
 
-### 뷰어 화면
+### 게시판 목록 - 검색 결과
 
 ![06_search3](./images/06_search3.png)
+
+### 게시판 상세
+
 ![07_view](./images/07_view.png)
 ![08_delete](./images/08_delete.png)
-![09_edit](./images/09_edit.png)
+
+### 글쓰기
+
 ![10_new1](./images/10_new1.png)
+
+### 글쓰기 - 오류케이스
+
 ![11_new2](./images/11_new2.png)
+
+### 글쓰기 - 페이지 이탈 방지 1
+
+![09_edit](./images/09_edit.png)
+
+### 글쓰기 - 페이지 이탈 방지 2
+
+![13_new3](./images/12_new3.png)

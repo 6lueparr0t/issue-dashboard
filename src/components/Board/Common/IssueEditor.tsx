@@ -45,7 +45,7 @@ export const IssueEditor: React.FC<BoardProps> = ({ category, method, issue }) =
   );
 
   const confirmComponent = (
-    <div>
+    <div className="w-full">
       <div className="text-center mb-4 leading-6">
         이 페이지를 벗어나면
         <br />

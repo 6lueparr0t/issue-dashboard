@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from "react";
 import modalStore from "@/store/modal";
 import { Modal } from "@/components/components.d";
 
+import { Button } from "@/components/ui/button";
+
 interface ModalProps extends React.PropsWithChildren {
   modal: Modal;
   index: number;
@@ -55,12 +57,9 @@ const Modal: React.FC<ModalProps> = ({ modal, index }) => {
             </div>
             <div className="bg-white py-4 justify-around px-6 flex">
               {modal.type === "alert" && (
-                <button
-                  onClick={closeModal}
-                  className="w-full inline-flex rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-500 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 ml-3 w-auto text-sm"
-                >
+                <Button onClick={closeModal}>
                   확인
-                </button>
+                </Button>
               )}
               {modal.type === "confirm" && modal.optionComponent}
             </div>

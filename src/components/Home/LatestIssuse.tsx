@@ -28,13 +28,11 @@ export const LatestIssuse: React.FC<BoardProps> = ({ category, list, title }) =>
       </h6>
       <Card className="shadow-none m-1">
         <CardContent className="h-40 p-6 flex flex-col justify-self-center overflow-auto">
-          {list.length <= 0 ? (
-            <div className="m-auto">등록된 게시글이 없습니다.</div>
-          ) : (
-            list.map((issue: Issue, index: number) => {
+          {list && list.length > 0 ? (
+            list?.map((issue: Issue, index: number) => {
               return (
                 <div key={index} className="grid grid-cols-2 gap-2">
-                  <div className="truncate md:w-52 xl:w-[550px]">
+                  <div className="truncate md:w-52 xl:w-[470px]">
                     <Link to={`/${category}/${issue.number}`}>
                       {issue.title}
                     </Link>
@@ -43,6 +41,8 @@ export const LatestIssuse: React.FC<BoardProps> = ({ category, list, title }) =>
                 </div>
               );
             })
+          ) : (
+            <div className="m-auto">등록된 게시글이 없습니다.</div>
           )}
         </CardContent>
       </Card>
