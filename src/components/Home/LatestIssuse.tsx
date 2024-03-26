@@ -32,7 +32,7 @@ export const LatestIssuse: React.FC<BoardProps> = ({ category, list, title }) =>
             list?.map((issue: Issue, index: number) => {
               return (
                 <div key={index} className="grid grid-cols-2 gap-2">
-                  <div className="truncate md:w-52 xl:w-[470px]">
+                  <div className="truncate w-32 md:w-52 xl:w-[480px]">
                     <Link to={`/${category}/${issue.number}`}>
                       {issue.title}
                     </Link>
