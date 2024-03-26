@@ -24,7 +24,7 @@ export const IssueTable: React.FC<BoardProps> = ({ category, list }) => {
           <TableHead className="w-1/12 min-w-16">번호</TableHead>
           <TableHead className="w-8/12 text-center">제목</TableHead>
           <TableHead className="w-1/12 text-center">작성자</TableHead>
-          <TableHead className="w-2/12 text-center">작성일</TableHead>
+          <TableHead className="w-2/12 min-w-24 text-center">작성일</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

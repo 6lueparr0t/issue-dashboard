@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
-import { Form } from "react-router-dom";
+import { Link, Form } from "react-router-dom";
+import { BoardProps } from "@/components/components.d";
 
 import {
   Select,
@@ -14,10 +15,10 @@ import { Button } from "@/components/ui/button";
 
 import modalStore from "@/store/modal";
 
-export const SearchInput: React.FC = () => {
+export const SearchInput: React.FC<BoardProps> = ({ category }) => {
   const [searchType, setSearchType] = useState("title");
   const [inputValue, setInputValue] = useState("");
-  const {pushModals} = modalStore();
+  const { pushModals } = modalStore();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -30,9 +31,9 @@ export const SearchInput: React.FC = () => {
   ) => {
     if (event.key === "Enter" || event.type === "click") {
       if (!inputRef?.current?.value) {
-        pushModals({message : "검색어를 입력하세요.", type:"alert", prevRef:inputRef});
-        // 모달 스택 확인
+        // 모달 스택 확인 : 아래 pushModals 복제하여 테스트
         // pushModals({message : "검색어를 입력하세요.", type:"alert", prevRef:inputRef});
+        pushModals({ message: "검색어를 입력하세요.", type: "alert", prevRef: inputRef });
         event.preventDefault();
       }
     }
@@ -60,14 +61,27 @@ export const SearchInput: React.FC = () => {
             </SelectContent>
           </Select>
         </div>
-        <Form className="flex w-full max-w-sm gap-4" method={"GET"}>
+        <Form className="flex w-full max-w-sm gap-2 sm:gap-4" method={"GET"}>
           <input type="hidden" name="in" value={searchType} />
           <Input type="text" name="keyword" ref={inputRef} onChange={changeEventHandler} />
-          <Button type="submit" onClick={keywordEventHandler}>
+          <Button
+            className="w-14 text-xs sm:w-20 sm:text-sm"
+            type="submit"
+            onClick={keywordEventHandler}
+          >
             검색
           </Button>
-          {inputValue.length > 0 && <Button onClick={resetHandler}>검색 취소</Button>}
+          {inputValue.length > 0 && (
+            <Button className="w-14 text-xs sm:w-20 sm:text-sm" onClick={resetHandler}>
+              검색 취소
+            </Button>
+          )}
         </Form>
+      </div>
+      <div>
+        <Link to={`/${category}/new`}>
+          <Button className="w-14 text-xs sm:w-20 sm:text-sm">글쓰기</Button>
+        </Link>
       </div>
     </>
   );

@@ -1,6 +1,5 @@
 import React, { Suspense, useEffect } from "react";
 import {
-  Link,
   Await,
   defer,
   redirect,
@@ -12,8 +11,6 @@ import fp from "lodash/fp";
 import { RouteLoaderData } from "@/pages/pages.d";
 import { sleep, requestList, search, parseData, parseLastPage, makeQuery } from "@/lib/utils";
 import { CATEGORIES, PER_PAGE } from "@/lib/constants";
-
-import { Button } from "@/components/ui/button";
 
 import { SearchInput } from "@/components/Board/SearchInput";
 import { IssueTable } from "@/components/Board/IssueTable";
@@ -32,12 +29,7 @@ const BoardPage: React.FC = () => {
     <div className="p-8">
       <div className="text-2xl text-left">{CATEGORIES[category].title}</div>
       <div className="my-4 flex flex-row justify-between">
-        <SearchInput />
-        <div>
-          <Link to={`/${category}/new`}>
-            <Button>글쓰기</Button>
-          </Link>
-        </div>
+        <SearchInput category={category} />
       </div>
       <div className="flex flex-col justify-center items-center">
       <Suspense fallback={<div style={{ textAlign: "center" }}>Loading...</div>}>
@@ -54,8 +46,8 @@ const BoardPage: React.FC = () => {
             {(last) => (
               <>
                 <div className="w-full flex flex-col justify-evenly items-center mt-20">
-                  {list[category].length > 0 ? <></> : <>등록된 게시글이 없습니다.</>}
-                  {list[category].length > 0 && (
+                  {list[category]?.length > 0 ? <></> : <>등록된 게시글이 없습니다.</>}
+                  {list[category]?.length > 0 && (
                     <IssuePagination
                       category={category}
                       last={last}

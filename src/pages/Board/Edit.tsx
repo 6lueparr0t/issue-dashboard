@@ -14,9 +14,11 @@ import { RouteLoaderData } from "@/pages/pages.d";
 import { sleep, requestList, requestPatch, parseData } from "@/lib/utils";
 import { CATEGORIES } from "@/lib/constants";
 import { IssueEditor } from "@/components/Board/Common/IssueEditor";
+import { Issue } from "@/components/components";
 
 const BoardEditPage: React.FC = () => {
   const { category, title, list } = useRouteLoaderData("board-edit") as RouteLoaderData;
+  const issue : Issue = list[category] as unknown as Issue;
 
   useEffect(() => {
     document.title = title;
@@ -40,7 +42,7 @@ const BoardEditPage: React.FC = () => {
     <div className="p-8 xl:w-1/2 m-auto">
       <div className="text-2xl text-left">게시판</div>
       <div className="flex flex-col">
-        <IssueEditor category={category} method={"PATCH"} issue={list[category]}/>
+        <IssueEditor category={category} method={"PATCH"} issue={issue}/>
       </div>
     </div>
   );
