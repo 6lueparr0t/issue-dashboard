@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { BoardProps, Issue } from "@/components/components.d";
 import { Card, CardContent } from "@/components/ui/card";
 
-// import fp from "lodash/fp";
+import fp from "lodash/fp";
 
 import dayjs from "dayjs";
 
@@ -31,29 +31,17 @@ export const LatestIssuse: React.FC<BoardProps> = ({ category, list, title }) =>
       <Card className="shadow-none m-1">
         <CardContent className="h-40 p-6 flex flex-col justify-self-center overflow-auto">
           {list && list.length > 0 ? (
-            list?.map((issue: Issue, index: number) => {
+            // TODO: fp.map 변경하기
+            fp.map((issue: Issue) => {
               return (
-                <div key={index} className="grid grid-cols-2 gap-2">
+                <div key={issue.number} className="grid grid-cols-2 gap-2">
                   <div className="truncate w-32 md:w-52 xl:w-[480px]">
-                    <Link to={`/${category}/${issue.number}`}>
-                      {issue.title}
-                    </Link>
-                    </div>
+                    <Link to={`/${category}/${issue.number}`}>{issue.title}</Link>
+                  </div>
                   <div className="text-right text-gray-500">{formatDateTime(issue.created_at)}</div>
                 </div>
               );
-            })
-            // TODO: fp.map 변경하기
-            // fp.map((issue: Issue) => {
-            //   return (
-            //     <div key={issue.number} className="grid grid-cols-2 gap-2">
-            //       <div className="truncate w-32 md:w-52 xl:w-[480px]">
-            //         <Link to={`/${category}/${issue.number}`}>{issue.title}</Link>
-            //       </div>
-            //       <div className="text-right text-gray-500">{formatDateTime(issue.created_at)}</div>
-            //     </div>
-            //   );
-            // }, list?.map)
+            }, list?.map)
           ) : (
             <div className="m-auto">등록된 게시글이 없습니다.</div>
           )}
