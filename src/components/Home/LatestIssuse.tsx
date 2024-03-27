@@ -32,16 +32,14 @@ export const LatestIssuse: React.FC<BoardProps> = ({ category, list, title }) =>
         <CardContent className="h-40 p-6 flex flex-col justify-self-center overflow-auto">
           {list && list.length > 0 ? (
             // TODO: fp.map 변경하기
-            fp.map((issue: Issue) => {
-              return (
-                <div key={issue.number} className="grid grid-cols-2 gap-2">
-                  <div className="truncate w-32 md:w-52 xl:w-[480px]">
-                    <Link to={`/${category}/${issue.number}`}>{issue.title}</Link>
-                  </div>
-                  <div className="text-right text-gray-500">{formatDateTime(issue.created_at)}</div>
+            fp.map((issue: Issue) => (
+              <div key={issue.number} className="grid grid-cols-2 gap-2">
+                <div className="truncate w-32 md:w-52 xl:w-[480px]">
+                  <Link to={`/${category}/${issue.number}`}>{issue.title}</Link>
                 </div>
-              );
-            }, list?.map)
+                <div className="text-right text-gray-500">{formatDateTime(issue.created_at)}</div>
+              </div>
+            ), list)
           ) : (
             <div className="m-auto">등록된 게시글이 없습니다.</div>
           )}
