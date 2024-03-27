@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { BoardProps, Issue } from "@/components/components.d";
 import { Card, CardContent } from "@/components/ui/card";
 
+// import fp from "lodash/fp";
+
 import dayjs from "dayjs";
 
 // 주어진 날짜와 현재 날짜를 비교하여 포맷을 결정하는 함수
@@ -16,7 +18,7 @@ const formatDateTime = (dateTimeString: string): string => {
   if (isToday) {
     return targetDate.format("HH:mm");
   } else {
-    return targetDate.format("YYYY-MM-DD HH:mm");
+    return targetDate.format("YYYY-MM-DD HH:mm"); // TODO: MM/DD 변경 필요
   }
 };
 
@@ -41,6 +43,17 @@ export const LatestIssuse: React.FC<BoardProps> = ({ category, list, title }) =>
                 </div>
               );
             })
+            // TODO: fp.map 변경하기
+            // fp.map((issue: Issue) => {
+            //   return (
+            //     <div key={issue.number} className="grid grid-cols-2 gap-2">
+            //       <div className="truncate w-32 md:w-52 xl:w-[480px]">
+            //         <Link to={`/${category}/${issue.number}`}>{issue.title}</Link>
+            //       </div>
+            //       <div className="text-right text-gray-500">{formatDateTime(issue.created_at)}</div>
+            //     </div>
+            //   );
+            // }, list?.map)
           ) : (
             <div className="m-auto">등록된 게시글이 없습니다.</div>
           )}
