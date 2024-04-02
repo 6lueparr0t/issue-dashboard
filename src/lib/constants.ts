@@ -12,5 +12,5 @@ export const CATEGORIES: {
 };
 
 export const HOME_PER_PAGE = 5;
-export const PER_PAGE = 10;
-export const PAGE_LENGTH = 10;
+export const PER_PAGE = 1;
+export const PAGE_LENGTH = 5;

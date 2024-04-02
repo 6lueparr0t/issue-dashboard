@@ -14,9 +14,18 @@ import {
 import { PAGE_LENGTH } from "@/lib/constants";
 
 export const IssuePagination: React.FC<PaginationProps> = ({ category, last, page, query }) => {
-  const prev  = (Math.floor(page / PAGE_LENGTH) - 1 ) * PAGE_LENGTH + 1; // 
-  const next  = (Math.ceil (page / PAGE_LENGTH) * PAGE_LENGTH) + 1;
-  const start = (Math.ceil (page / PAGE_LENGTH) - 1 ) * PAGE_LENGTH;
+  const start = (Math.ceil(page / PAGE_LENGTH) - 1) * PAGE_LENGTH;
+
+  /**
+   * ? INFO : pagination method 1 : 페이지네이션의 맨 끝으로
+   * */
+  // const prev = Math.max(1, (Math.floor(page / PAGE_LENGTH) - 1) * PAGE_LENGTH + 1);
+  /**
+   * ? INFO : pagination method 2 : 페이지네이션의 맨 마지막으로
+   * */
+  const prev = Math.max(1, start);
+
+  const next = Math.min(last, Math.ceil(page / PAGE_LENGTH) * PAGE_LENGTH + 1);
 
   return (
     <Pagination>
@@ -25,7 +34,7 @@ export const IssuePagination: React.FC<PaginationProps> = ({ category, last, pag
           <PaginationFirst to={`/${category}?page=1${query}`} />
         </PaginationItem>
         <PaginationItem className="rounded-md border-solid border-2 border-gray-400">
-          <PaginationPrevious to={`/${category}?page=${prev < 1 ? 1 : prev}${query}`} />
+          <PaginationPrevious to={`/${category}?page=${prev}${query}`} />
         </PaginationItem>
         {Array.from({ length: PAGE_LENGTH }).map((_, index) => {
           const num = index + start + 1;
@@ -42,7 +51,7 @@ export const IssuePagination: React.FC<PaginationProps> = ({ category, last, pag
           );
         })}
         <PaginationItem className="rounded-md border-solid border-2 border-gray-400">
-          <PaginationNext to={`/${category}?page=${next > last ? last : next}${query}`} />
+          <PaginationNext to={`/${category}?page=${next}${query}`} />
         </PaginationItem>
         <PaginationItem className="rounded-md border-solid border-2 border-gray-400">
           <PaginationLast to={`/${category}?page=${last}${query}`} />
