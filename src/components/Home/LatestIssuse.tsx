@@ -34,7 +34,7 @@ export const LatestIssuse: React.FC<BoardProps> = ({ category, list, title }) =>
             // TODO: fp.map 변경하기
             fp.map((issue: Issue) => (
               <div key={issue.number} className="grid grid-cols-2 gap-2">
-                <div className="truncate w-32 md:w-52 xl:w-[480px]">
+                <div className="truncate w-18 sm:w-28 md:w-36 lg:w-64 xl:w-[480px] 2x:w-[960px]">
                   <Link to={`/${category}/${issue.number}`}>{issue.title}</Link>
                 </div>
                 <div className="text-right text-gray-500">{formatDateTime(issue.created_at)}</div>
