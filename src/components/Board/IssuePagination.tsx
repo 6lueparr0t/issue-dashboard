@@ -11,10 +11,12 @@ import {
   PaginationLast,
 } from "@/components/ui/pagination";
 
+import { PAGE_LENGTH } from "@/lib/constants";
+
 export const IssuePagination: React.FC<PaginationProps> = ({ category, last, page, query }) => {
-  const prev = (Math.floor(page / 10) - 1) * 10 + 1;
-  const next = Math.ceil(page / 10) * 10 + 1;
-  const start = Number((Math.ceil(page / 10) - 1) * 10);
+  const prev  = (Math.floor(page / PAGE_LENGTH) - 1 ) * PAGE_LENGTH + 1; // 
+  const next  = (Math.ceil (page / PAGE_LENGTH) * PAGE_LENGTH) + 1;
+  const start = (Math.ceil (page / PAGE_LENGTH) - 1 ) * PAGE_LENGTH;
 
   return (
     <Pagination>
@@ -25,7 +27,7 @@ export const IssuePagination: React.FC<PaginationProps> = ({ category, last, pag
         <PaginationItem className="rounded-md border-solid border-2 border-gray-400">
           <PaginationPrevious to={`/${category}?page=${prev < 1 ? 1 : prev}${query}`} />
         </PaginationItem>
-        {Array.from({ length: 10 }).map((_, index) => {
+        {Array.from({ length: PAGE_LENGTH }).map((_, index) => {
           const num = index + start + 1;
           if (num > last) return;
           return (
