@@ -34,7 +34,7 @@ const BoardViewPage: React.FC = () => {
       <div className="text-2xl text-left">{CATEGORIES[category].title}</div>
       <div className="text-2xl text-left my-8">{title}</div>
       <div className="flex flex-col">
-        <Suspense fallback={<div style={{ textAlign: "center" }}>Loading...</div>}>
+        <Suspense fallback={<div className="text-center">Loading...</div>}>
           <Await resolve={list}>
             {(list) => (
               <>

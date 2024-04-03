@@ -19,7 +19,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="flex flex-col justify-center items-center p-8">
-      <Suspense fallback={<div style={{ textAlign: "center" }}>Loading...</div>}>
+      <Suspense fallback={<div className="text-center">Loading...</div>}>
         <Await resolve={list}>
           {(list) => (
             <>

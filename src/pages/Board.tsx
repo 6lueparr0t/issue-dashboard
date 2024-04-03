@@ -32,7 +32,7 @@ const BoardPage: React.FC = () => {
         <SearchInput category={category} />
       </div>
       <div className="flex flex-col justify-center items-center">
-      <Suspense fallback={<div style={{ textAlign: "center" }}>Loading...</div>}>
+      <Suspense fallback={<div className="text-center">Loading...</div>}>
           <Await resolve={list}>
             {(list) => (
               <>
@@ -41,7 +41,7 @@ const BoardPage: React.FC = () => {
             )}
           </Await>
         </Suspense>
-        <Suspense fallback={<div style={{ textAlign: "center" }}>Loading...</div>}>
+        <Suspense fallback={<div className="text-center">Loading...</div>}>
           <Await resolve={last}>
             {(last) => (
               <>
