@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import modalStore from "@/store/modal";
-import { Modal } from "@/components/components.d";
+import type { Modal } from "@/components/components.d";
 
 import { Button } from "@/components/ui/button";
 
@@ -44,14 +44,14 @@ const Modal: React.FC<ModalProps> = ({ modal, index }) => {
         className={`fixed z-${Number(10000 + index)} inset-0 overflow-y-auto`}
         onKeyDown={keyDownLockHandler}
       >
-        <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center block">
+        <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center">
           <div className="fixed inset-0 transition-opacity" aria-hidden="true">
             <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
           </div>
 
-          <span className="hidden inline-block align-middle h-screen" aria-hidden="true"></span>
+          <span className="hidden align-middle h-screen" aria-hidden="true"></span>
 
-          <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all my-8 align-middle max-w-lg w-full">
+          <div className="inline-block align-middle bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all my-8 max-w-lg w-full">
             <div className="bg-white mt-8">
               <p className="text-xl font-bold text-center">{modal.message}</p>
             </div>
